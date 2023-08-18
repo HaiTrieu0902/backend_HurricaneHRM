@@ -20,7 +20,7 @@ app.use(express.json());
 
 // ROUTES USER
 mongoose
-    .connect(process.env.MONGO_URL_LOCAL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected!'))
     .catch((error) => console.error('Error connecting to MongoDB:', error));
 
