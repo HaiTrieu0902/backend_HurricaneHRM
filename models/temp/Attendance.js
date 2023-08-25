@@ -49,6 +49,10 @@ const AttendanceSchema = new mongoose.Schema(
             type: Number,
             require: true,
         },
+        note: {
+            type: String,
+            require: true,
+        },
     },
     { timestamps: true },
 );

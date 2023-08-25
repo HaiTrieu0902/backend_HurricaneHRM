@@ -38,21 +38,20 @@ const authController = {
     //Login
     login: async (req, res) => {
         try {
-            const user = await UserModel.findOne({ email: req.body.email });
+            const user = await UserModel.findOne({ username: req.body.username });
             if (!user) {
-                return res.status(404).json('Not found email address');
+                return res.status(404).json('Not found username address');
             }
 
             const validatePassword = await bcrypt.compare(req.body.password, user?.password);
             if (!validatePassword) {
-                return res.status(400).json('Password is wrong');
+                return res.status(400).json('Password is wrong, try again!');
             }
             if (user && validatePassword) {
                 /* token : Không chưa thời gian có hạn, nếu set thì token trở nên ngắn hạn phù hợp với (Ngân hàng,Giáo dục...) */
                 const token = jwt.sign(
                     { id: user._id, username: user?.username, email: user?.email },
                     process.env.JWT_KEY_TOKEN,
-                    { expiresIn: '2h' },
                 );
 
                 /* create cookies: ngăn chặn tấn công  */
@@ -115,6 +114,33 @@ const authController = {
             res.status(500).json(error);
         }
     },
+
+    /* Forgot-password  */
+    forgotPassword: async (req, res) => {
+        try {
+            const user = await UserModel.findOne({ username: req.body.username });
+            if (!user) {
+                return res.status(404).json({ error: 'Not Foud User' });
+            }
+            
+            if(req.body.newPassword === req.body.confirmPassword) {
+                const salt = await bcrypt.genSalt(saltRounds);
+                const hashedPassword = await bcrypt.hash(req.body.confirmPassword, salt);
+                const updateResult = await UserModel.findByIdAndUpdate(user._id, { password: hashedPassword });
+                if (updateResult) {
+                    return res.status(200).json({ message: 'Change Password Success' });
+                } else {
+                    return res.status(401).json({ message: 'Change Password Failed' });
+                }
+
+            }else {
+                return  res.status(500).json({ message: 'New Password and Confirm Password not match' });
+            }
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    },
+
 };
 
 module.exports = authController;

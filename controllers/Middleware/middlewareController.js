@@ -21,7 +21,7 @@ const middlewareController = {
             if (req.data?.id === req.params.id || req.data?.role === 'admin') {
                 next();
             } else {
-                return res.status(401).json({ message: 'You are not allowed to delete othe, you can delete you' });
+                return res.status(401).json({ message: 'You are not allowed to delete other, you can delete you' });
             }
         });
     },
