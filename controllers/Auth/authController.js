@@ -120,10 +120,10 @@ const authController = {
         try {
             const user = await UserModel.findOne({ username: req.body.username });
             if (!user) {
-                return res.status(404).json({ error: 'Not Foud User' });
+                return res.status(404).json({ error: 'Not Foud User, Try it again!' });
             }
             
-            if(req.body.newPassword === req.body.confirmPassword) {
+            if(req.body.password === req.body.confirmPassword) {
                 const salt = await bcrypt.genSalt(saltRounds);
                 const hashedPassword = await bcrypt.hash(req.body.confirmPassword, salt);
                 const updateResult = await UserModel.findByIdAndUpdate(user._id, { password: hashedPassword });

@@ -4,6 +4,7 @@ const AttendanceSchema = new mongoose.Schema(
         attendance_id: {
             type: String,
             require: true,
+            unique: true,
         },
         employee_id: {
             type: String,
@@ -12,7 +13,6 @@ const AttendanceSchema = new mongoose.Schema(
         user_id: {
             type: String,
             require: true,
-            minlength: 10,
             maxlength: 255,
         },
         date: {
@@ -33,16 +33,14 @@ const AttendanceSchema = new mongoose.Schema(
         },
         ot_start_time: {
             type: String,
-            require: true,
+            default: null,
         },
         ot_end_time: {
             type: String,
-            require: true,
+            default: null,
         },
         name_employee: {
             type: String,
-            minlength: 6,
-            maxlength: 255,
             require: true,
         },
         department_id: {
@@ -56,5 +54,26 @@ const AttendanceSchema = new mongoose.Schema(
     },
     { timestamps: true },
 );
+
+AttendanceSchema.pre('save', function (next) {
+    const attendance = this;
+    if (!attendance.isNew) {
+        // Chỉ thực hiện khi tạo mới người dùng, không thực hiện khi update
+        return next();
+    }
+    Attendance.findOne({}, {}, { sort: { attendance_id: -1 } }, function (err, lastAttendace) {
+        if (err) {
+            return next(err);
+        }
+
+        let lastAttendanceId = 1000;
+        if (lastAttendace) {
+            lastAttendanceId = lastAttendace.attendance_id;
+        }
+        attendance.attendance_id = lastAttendanceId + 1;
+        next();
+    });
+});
+
 const Attendance = mongoose.model('Attendance', AttendanceSchema);
 module.exports = Attendance;
