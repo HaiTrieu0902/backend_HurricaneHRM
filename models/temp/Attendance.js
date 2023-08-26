@@ -7,7 +7,7 @@ const AttendanceSchema = new mongoose.Schema(
             unique: true,
         },
         employee_id: {
-            type: String,
+            type: Number,
             require: true,
         },
         user_id: {
@@ -39,13 +39,14 @@ const AttendanceSchema = new mongoose.Schema(
             type: String,
             default: null,
         },
-        name_employee: {
+        employee_name: {
             type: String,
             require: true,
         },
         department_id: {
             type: Number,
             require: true,
+            default: 1,
         },
         note: {
             type: String,
@@ -68,9 +69,12 @@ AttendanceSchema.pre('save', function (next) {
 
         let lastAttendanceId = 1000;
         if (lastAttendace) {
-            lastAttendanceId = lastAttendace.attendance_id;
+            lastAttendanceId = parseInt(lastAttendace.attendance_id) + 1;
+        } else {
+            lastAttendanceId = 1001;
         }
-        attendance.attendance_id = lastAttendanceId + 1;
+
+        attendance.attendance_id = lastAttendanceId;
         next();
     });
 });
