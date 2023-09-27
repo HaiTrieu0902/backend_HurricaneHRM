@@ -38,9 +38,9 @@ const authController = {
     //Login
     login: async (req, res) => {
         try {
-            const user = await UserModel.findOne({ username: req.body.username });
+            const user = await UserModel.findOne({ email: req.body.email });
             if (!user) {
-                return res.status(404).json('Not found username address');
+                return res.status(404).json('Not found email address');
             }
 
             const validatePassword = await bcrypt.compare(req.body.password, user?.password);
