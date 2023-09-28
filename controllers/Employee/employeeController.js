@@ -1,5 +1,5 @@
 const { EmployeeModel, DepartmentModel, MarriageModel } = require('../../models');
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 10;
 const moment = require('moment');
 
 const getMarriages = async () => {
